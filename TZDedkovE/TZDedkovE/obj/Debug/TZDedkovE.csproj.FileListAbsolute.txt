@@ -1,0 +1,14 @@
+F:\MyGit\TZDedkovE\TZDedkovE\bin\Debug\TZDedkovE.exe.config
+F:\MyGit\TZDedkovE\TZDedkovE\bin\Debug\TZDedkovE.exe
+F:\MyGit\TZDedkovE\TZDedkovE\bin\Debug\TZDedkovE.pdb
+F:\MyGit\TZDedkovE\TZDedkovE\obj\Debug\TZDedkovE.csproj.AssemblyReference.cache
+F:\MyGit\TZDedkovE\TZDedkovE\obj\Debug\TZDedkovE.csproj.CoreCompileInputs.cache
+F:\MyGit\TZDedkovE\TZDedkovE\obj\Debug\TZDedkovE.exe
+F:\MyGit\TZDedkovE\TZDedkovE\obj\Debug\TZDedkovE.pdb
+F:\MyGit\TZDedkov\TZDedkovE\TZDedkovE\bin\Debug\TZDedkovE.exe.config
+F:\MyGit\TZDedkov\TZDedkovE\TZDedkovE\bin\Debug\TZDedkovE.exe
+F:\MyGit\TZDedkov\TZDedkovE\TZDedkovE\bin\Debug\TZDedkovE.pdb
+F:\MyGit\TZDedkov\TZDedkovE\TZDedkovE\obj\Debug\TZDedkovE.csproj.AssemblyReference.cache
+F:\MyGit\TZDedkov\TZDedkovE\TZDedkovE\obj\Debug\TZDedkovE.csproj.CoreCompileInputs.cache
+F:\MyGit\TZDedkov\TZDedkovE\TZDedkovE\obj\Debug\TZDedkovE.exe
+F:\MyGit\TZDedkov\TZDedkovE\TZDedkovE\obj\Debug\TZDedkovE.pdb
