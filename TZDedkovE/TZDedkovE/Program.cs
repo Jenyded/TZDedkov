@@ -10,9 +10,9 @@ namespace TaskExam
         {
             TestGenerateWordsFromWord();
             TestMaxLengthTwoChar();
-            // TestGetPreviousMaxDigital();
+            TestGetPreviousMaxDigital();
             TestSearchQueenOrHorse();
-            //TestCalculateMaxCoins();
+            TestCalculateMaxCoins();
 
             Console.WriteLine("All Test completed!");
         }
@@ -88,23 +88,62 @@ namespace TaskExam
             return res;
         }
         #endregion
-        
+
+        #region задание 3) Предыдущее число
         /// задание 3) Предыдущее число
         public static long GetPreviousMaxDigital(long value)
         {
-            //код алгоритма
+            string numStr = value.ToString();
+            int lenghtStr = numStr.Length;
+            for (int i = lenghtStr - 1; i > 0; i--)
+            {
+                if (numStr[i - 1] > numStr[i])
+                {
+                    char[] numArray = numStr.ToCharArray();
+                    char previousNumber = '0';  // находим следующую наименьшую цифру в числе
+                    int prevIndex = -1;
+                    for (int j = i; j < lenghtStr; j++)
+                    {
+                        if (numArray[j] > previousNumber && numArray[j] < numStr[i - 1])
+                        {
+                            previousNumber = numArray[j];
+                            prevIndex = j;
+                        }
+                    }
+
+                    if (prevIndex == -1)
+                    {
+                        return -1;
+                    }
+
+                    numArray[prevIndex] = numStr[i - 1]; //Меняем местами цифру со следующей наименьшей 
+                    numArray[i - 1] = previousNumber;
+
+                    ReverseComparer reverse = new ReverseComparer();
+                    Array.Sort(numArray, i, lenghtStr - i, reverse); //Сортируем цифры после следующей наименьшей цифры
+
+                    string prevNum = new string(numArray);
+
+                    if (prevNum[0] == '0') // Проверка, начинается ли новое число с нуля
+                    {
+                        return -1;
+                    }
+                    return int.Parse(prevNum);
+                }
+            }
             return -1;
         }
+        #endregion
 
         #region задание 4) Конь и Королева
         /// задание 4) Конь и Королева
         public static List<int> SearchQueenOrHorse(char[][] gridMap)
         {
-            int start_r = -1;
-            int start_c = -1;
+            int startRow = -1;
+            int startColumn = -1;
 
-            int end_r = -1;
-            int end_c = -1;
+            int endRow = -1;
+            int endColumn = -1;
 
             for (int row = 0; row < gridMap.Length; row++)
             {
@@ -112,23 +151,23 @@ namespace TaskExam
                 {
                     if (gridMap[row][column] == 's')
                     {
-                        start_r = row;
-                        start_c = column;
+                        startRow = row;
+                        startColumn = column;
                     }
 
                     if (gridMap[row][column] == 'e')
                     {
-                        end_r = row;
-                        end_c = column;
+                        endRow = row;
+                        endColumn = column;
                     }
                 }
             }
 
-            if (start_r < 0 || start_c < 0 || end_r < 0 || end_c < 0)
+            if (startRow < 0 || startColumn < 0 || endRow < 0 || endColumn < 0)
             {
                 return new List<int> { -1, -1 };
             }
-            return FindShortestPath(gridMap, start_r, start_c, end_r, end_c);
+            return FindShortestPath(gridMap, startRow, startColumn, endRow, endColumn);
         }
 
         static List<int> FindShortestPath(char[][] matrix, int start_row, int start_column, int end_row, int end_column)
@@ -173,13 +212,13 @@ namespace TaskExam
                 // Ищем все возможные ходы
                 for (int i = 0; i < dx.Length - 1; i += 2)
                 {
-                    int new_row = currentNode.Row + dx[i];
-                    int new_column = currentNode.Column + dx[i + 1];
+                    int newRow = currentNode.Row + dx[i];
+                    int newColumn = currentNode.Column + dx[i + 1];
 
-                    if (new_row >= 0 && new_row < matrix.Length && new_column >= 0 && new_column < matrix[0].Length && matrix[new_row][new_column] != 'x' && !visited[new_row, new_column])
+                    if (newRow >= 0 && newRow < matrix.Length && newColumn >= 0 && newColumn < matrix[0].Length && matrix[newRow][newColumn] != 'x' && !visited[newRow, newColumn])
                     {
-                        visited[new_row, new_column] = true;
-                        queue.Enqueue(new Node(new_row, new_column, currentNode.Moves + 1));
+                        visited[newRow, newColumn] = true;
+                        queue.Enqueue(new Node(newRow, newColumn, currentNode.Moves + 1));
                     }
                 }
             }
@@ -234,12 +273,66 @@ namespace TaskExam
         }
         #endregion
 
+        #region задание 5) Жадина
         /// задание 5) Жадина
         public static long CalculateMaxCoins(int[][] mapData, int idStart, int idFinish)
         {
-            //код алгоритма
-            return -1;
+            var maxValue = -1;
+            for (var i = 0; i < mapData.Length; i++)
+                for (var j = 0; j < mapData[i].Length - 1; j++)
+                {
+                    if (maxValue < mapData[i][j])
+                    {
+                        maxValue = mapData[i][j];
+                    }
+                }
+
+            var roads = new bool[maxValue + 1, maxValue + 1];
+            var coins = new int[maxValue + 1, maxValue + 1];
+            for (var i = 0; i < mapData.Length; i++)
+            {
+                var X = mapData[i][0];
+                var Y = mapData[i][1];
+                roads[X, Y] = true;
+                coins[X, Y] = mapData[i][2];
+            }
+
+            return FindMaxCoins(maxValue, idStart, idFinish, roads, coins);
         }
+        
+        // NumberOfCities - количество городов
+        // start - начальная точка
+        // end - конечная точка
+        // roads - матрица смежности, где roads[i,j] = true если между городами i и j существует дорога, иначе false
+        // coins - матрица с количеством монет на каждой дороге, где coins[i,j] - количество монет на дороге между городами i и j
+        public static int FindMaxCoins(int NumberOfCities, int start, int end, bool[,] roads, int[,] coins)
+        {
+            int[] dist = Enumerable.Repeat(-1, NumberOfCities + 1).ToArray();
+            dist[start] = 0;
+            var queue = new PriorityQueue<int, int>();
+            queue.Enqueue(0, start);
+            while (queue.Count > 0)
+            {
+                queue.TryDequeue(out var currentDist, out var currentNode);
+
+                if (dist[currentNode] < currentDist)
+                    continue;
+
+                for (int neighbor = 0; neighbor < NumberOfCities + 1; neighbor++)
+                {
+                    if (!roads[currentNode, neighbor])
+                        continue;
+
+                    if (dist[neighbor] == -1 || dist[neighbor] < dist[currentNode] + coins[currentNode, neighbor])
+                    {
+                        dist[neighbor] = dist[currentNode] + coins[currentNode, neighbor];
+                        queue.Enqueue(dist[neighbor], neighbor);
+                    }
+                }
+            }
+            return dist[end] != -1 ? dist[end] : -1;
+        }
+        #endregion
 
         /// Тесты (можно/нужно добавлять свои тесты) 
 
@@ -262,7 +355,7 @@ namespace TaskExam
             AssertEqual(MaxLengthTwoChar("beabeeab"), 5);
             AssertEqual(MaxLengthTwoChar("а"), 0);
             AssertEqual(MaxLengthTwoChar("ab"), 2);
-            AssertEqual(MaxLengthTwoChar("abababaabababecececececececececeee"), 15);
+            AssertEqual(MaxLengthTwoChar("abababaabababecececececececececeee"), 15);            
         }
 
         private static void TestGetPreviousMaxDigital()
@@ -435,8 +528,19 @@ namespace TaskExam
         }
     }
 
-    #region В рамках задания 4) Конь и Королева
+    #region В рамках задания 3) Предидущее число
     
+    public class ReverseComparer : IComparer<char>
+    {
+        public int Compare(char x, char y)
+        {
+           return y.CompareTo(x); // сравнение Х и Y в обратном порядке
+        }
+    }
+    #endregion
+
+    #region В рамках задания 4) Конь и Королева
+
     class Node
     {
         public int Row { get; set; }
